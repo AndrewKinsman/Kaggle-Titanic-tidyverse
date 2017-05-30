@@ -548,6 +548,7 @@ ggplot(titanic[1:891,], aes(x = Embarked, fill = Survived)) +
 ```
 
 ![](Titanic_tidyverse_files/figure-html/unnamed-chunk-25-1.png)<!-- -->
+
 The Cherbourg passengers appear to have had the better prospects.
 
 
@@ -560,6 +561,7 @@ ggplot(titanic[1:891,], aes(x = Pclass, fill = Survived)) +
 ```
 
 ![](Titanic_tidyverse_files/figure-html/unnamed-chunk-26-1.png)<!-- -->
+
 As one would have expected, those in first-class had a far higher survival chance, whereas only around one in four of the third-class passengers made it through the night.
 
 
