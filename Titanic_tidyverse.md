@@ -1,4 +1,6 @@
 # A (mostly!) tidyverse tour of the Titanic
+Andrew Kinsman  
+30 May 2017  
 
 ## Introduction
 
@@ -17,27 +19,7 @@ Anyhow, that's enough introduction, let's crack on with some "tidyversing" of ou
 
 ```r
 library(tidyverse)
-```
 
-```
-## Loading tidyverse: ggplot2
-## Loading tidyverse: tibble
-## Loading tidyverse: tidyr
-## Loading tidyverse: readr
-## Loading tidyverse: purrr
-## Loading tidyverse: dplyr
-```
-
-```
-## Conflicts with tidy packages ----------------------------------------------
-```
-
-```
-## filter(): dplyr, stats
-## lag():    dplyr, stats
-```
-
-```r
 setwd("C:/Users/aphki/Documents/R_Working_Directory/Kaggle Titanic")
 train <- suppressMessages(read_csv("train.csv"))
 test <- suppressMessages(read_csv("test.csv"))
@@ -222,7 +204,7 @@ So now that we at least have an idea of a minimum target to beat, let's collect 
 
 
 ```r
-titanic <- suppressMessages(full_join(train, test))
+titanic <- full_join(train, test)
 glimpse(titanic)
 ```
 
@@ -365,94 +347,6 @@ Remaining with the Name strings, it might also be interesting to extract the fir
 
 ```r
 library(qdap)
-```
-
-```
-## Loading required package: qdapDictionaries
-```
-
-```
-## Loading required package: qdapRegex
-```
-
-```
-## 
-## Attaching package: 'qdapRegex'
-```
-
-```
-## The following objects are masked from 'package:dplyr':
-## 
-##     escape, explain
-```
-
-```
-## The following object is masked from 'package:ggplot2':
-## 
-##     %+%
-```
-
-```
-## Loading required package: qdapTools
-```
-
-```
-## 
-## Attaching package: 'qdapTools'
-```
-
-```
-## The following object is masked from 'package:dplyr':
-## 
-##     id
-```
-
-```
-## Loading required package: RColorBrewer
-```
-
-```
-## 
-## Attaching package: 'qdap'
-```
-
-```
-## The following object is masked from 'package:stringr':
-## 
-##     %>%
-```
-
-```
-## The following object is masked from 'package:forcats':
-## 
-##     %>%
-```
-
-```
-## The following object is masked from 'package:dplyr':
-## 
-##     %>%
-```
-
-```
-## The following object is masked from 'package:purrr':
-## 
-##     %>%
-```
-
-```
-## The following object is masked from 'package:tidyr':
-## 
-##     %>%
-```
-
-```
-## The following object is masked from 'package:base':
-## 
-##     Filter
-```
-
-```r
 titanic <- titanic %>%
               mutate(Surname = factor(beg2char(Name, ","))) %>% 
               glimpse()
@@ -521,7 +415,7 @@ So not only do those travelling without a family have poor survival chances, but
 First let's see how many missing values there are.
 
 ```r
-suppressMessages(library(VIM))
+library(VIM)
 
 titanic %>% map_dbl(~sum(is.na(.)))
 ```
@@ -675,10 +569,6 @@ ggplot(titanic[1:891,], aes(x = log(Fare), fill = Survived)) +
       ggtitle("Density Plot of Fare related to Survival") 
 ```
 
-```
-## Warning: Removed 15 rows containing non-finite values (stat_density).
-```
-
 ![](Titanic_tidyverse_files/figure-html/unnamed-chunk-27-1.png)<!-- -->
 
 Here we first transform Fare to a log scale to deal with the heavy right-skew. Clearly those with cheaper (i.e. third-class) tickets were by far the most at risk.
@@ -777,55 +667,6 @@ train1 <- titanic[1:891,]
 test1 <- titanic[892:1309,]
 
 library(party)
-```
-
-```
-## Loading required package: mvtnorm
-```
-
-```
-## Loading required package: modeltools
-```
-
-```
-## Loading required package: stats4
-```
-
-```
-## Loading required package: strucchange
-```
-
-```
-## Loading required package: zoo
-```
-
-```
-## 
-## Attaching package: 'zoo'
-```
-
-```
-## The following objects are masked from 'package:base':
-## 
-##     as.Date, as.Date.numeric
-```
-
-```
-## Loading required package: sandwich
-```
-
-```
-## 
-## Attaching package: 'strucchange'
-```
-
-```
-## The following object is masked from 'package:stringr':
-## 
-##     boundary
-```
-
-```r
 set.seed(144)
 cf_model <- cforest(Survived ~ Sex + Age + SibSp + Parch + 
                  Fare + Embarked + Pclass + Title + Mother + 
@@ -840,24 +681,6 @@ Let's take a look at this model. First the confusion matrix, which shows how man
 ```r
 xtab <- table(predict(cf_model), train1$Survived)
 library(caret) 
-```
-
-```
-## Loading required package: lattice
-```
-
-```
-## 
-## Attaching package: 'caret'
-```
-
-```
-## The following object is masked from 'package:purrr':
-## 
-##     lift
-```
-
-```r
 confusionMatrix(xtab)
 ```
 
