@@ -762,7 +762,7 @@ cf_solution <- data.frame(PassengerID = test1$PassengerId, Survived = cf_predict
 
 This model scored 0.80861 when submitted to the Kaggle competition, as you can see here:
 
-![Kaggle screenshot](http://github.com/AndrewKinsman/Kaggle-Titanic-tidyverse/tree/master/Titanic_tidyverse_files/figure-html/Capture2.png)
+![Kaggle screenshot](http://github.com/AndrewKinsman/Kaggle-Titanic-tidyverse/tree/master/Titanic_tidyverse_files/figure-html/Capture2.PNG)
 
 ## Conclusion
 
