@@ -1,2 +1,3 @@
-# Kaggle-Titanic-tidyverse
-A (mostly!) tidyverse tour of the Titanic
+# A (mostly!) tidyverse tour of the Titanic
+
+My tidyverse-focused entry to the Kaggle Titanic competition.
