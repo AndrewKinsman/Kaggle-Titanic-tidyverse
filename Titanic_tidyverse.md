@@ -661,7 +661,7 @@ Now we finally have a tidy dataset, suitable for modelling, meeting the objectiv
 
 ## Model Building
 
-So let's build a model. Here we use the cforest() function from the party package, a type of random forest that is based on conditional inference trees.
+So let's build a model. Here we shall use the cforest() function from the party package, a type of random forest that is based on conditional inference trees. Note that we are using a log transformation of Fare for the reasons outlined above.
 
 
 ```r
@@ -671,7 +671,7 @@ test1 <- titanic[892:1309,]
 library(party)
 set.seed(144)
 cf_model <- cforest(Survived ~ Sex + Age + SibSp + Parch + 
-                 Fare + Embarked + Pclass + Title + Mother + 
+                 log(Fare) + Embarked + Pclass + Title + Mother + 
                  Solo + FamilySize + FamilyType + LifeStage,
                  data = train1, 
                  controls = cforest_unbiased(ntree = 2000, mtry = 3)) 
@@ -691,31 +691,31 @@ confusionMatrix(xtab)
 ## 
 ##      
 ##        No Yes
-##   No  507  96
-##   Yes  42 246
+##   No  511 104
+##   Yes  38 238
 ##                                           
-##                Accuracy : 0.8451          
-##                  95% CI : (0.8197, 0.8683)
+##                Accuracy : 0.8406          
+##                  95% CI : (0.8149, 0.8641)
 ##     No Information Rate : 0.6162          
 ##     P-Value [Acc > NIR] : < 2.2e-16       
 ##                                           
-##                   Kappa : 0.6625          
-##  Mcnemar's Test P-Value : 6.432e-06       
+##                   Kappa : 0.6504          
+##  Mcnemar's Test P-Value : 4.906e-08       
 ##                                           
-##             Sensitivity : 0.9235          
-##             Specificity : 0.7193          
-##          Pos Pred Value : 0.8408          
-##          Neg Pred Value : 0.8542          
+##             Sensitivity : 0.9308          
+##             Specificity : 0.6959          
+##          Pos Pred Value : 0.8309          
+##          Neg Pred Value : 0.8623          
 ##              Prevalence : 0.6162          
-##          Detection Rate : 0.5690          
-##    Detection Prevalence : 0.6768          
-##       Balanced Accuracy : 0.8214          
+##          Detection Rate : 0.5735          
+##    Detection Prevalence : 0.6902          
+##       Balanced Accuracy : 0.8133          
 ##                                           
 ##        'Positive' Class : No              
 ## 
 ```
 
-Overall, our model achieved 84.51% accuracy on the training data. However, given that the model was actually built on that data it is highly unlikely that a similar level of accuracy can be achieved using the "unseen" test data.
+Overall, our model achieved 84.06% accuracy on the training data. However, given that the model was actually built on that data it is highly unlikely that a similar level of accuracy can be achieved using the "unseen" test data.
 
 It is, however, interesting to examine which variables are perceived as most important by the model:
 
@@ -725,12 +725,12 @@ varimp(cf_model)
 ```
 
 ```
-##         Sex         Age       SibSp       Parch        Fare    Embarked 
-## 0.086958716 0.006616208 0.005400612 0.002498471 0.017243119 0.003870031 
+##         Sex         Age       SibSp       Parch   log(Fare)    Embarked 
+## 0.082837920 0.005914373 0.005469419 0.002428135 0.006299694 0.003857798 
 ##      Pclass       Title      Mother        Solo  FamilySize  FamilyType 
-## 0.035876147 0.103813456 0.002356269 0.004822630 0.009233945 0.021019878 
+## 0.034149847 0.106966361 0.002703364 0.005374618 0.008174312 0.022463303 
 ##   LifeStage 
-## 0.006191131
+## 0.006252294
 ```
 
 It may be easier to compare these by means of a plot:
@@ -760,7 +760,7 @@ cf_solution <- data.frame(PassengerID = test1$PassengerId, Survived = cf_predict
 # write.csv(cf_solution, file = 'cf_model.csv', row.names = F)
 ```
 
-This model scored 0.80383 when I submitted it in the Kaggle competition.
+This model scored 0.80861 when submitted to the Kaggle competition.
 
 ## Conclusion
 
