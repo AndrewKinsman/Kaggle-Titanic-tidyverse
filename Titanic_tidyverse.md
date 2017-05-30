@@ -760,9 +760,7 @@ cf_solution <- data.frame(PassengerID = test1$PassengerId, Survived = cf_predict
 # write.csv(cf_solution, file = 'cf_model.csv', row.names = F)
 ```
 
-This model scored 0.80861 when submitted to the Kaggle competition, as you can see here:
-
-![](C:\Users\aphki\Documents\R_Working_Directory\Kaggle Titanic\Titanic_tidyverse_files\figure-html\Capture2.PNG)
+This model scored 0.80861 when submitted to the Kaggle competition.
 
 ## Conclusion
 
