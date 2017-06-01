@@ -464,7 +464,7 @@ aggr(titanic, prop = FALSE, combined = TRUE, numbers = TRUE, sortVars = TRUE, so
 
 This plot shows that 529 observations are missing just the cabin, 183 observations have no missing values, and 158 are missing both cabin and age, etc. Given that so many cabins are missing, it seems best to ignore these altogether.
 
-We'll start with the easy ones. For the two missing Embarked observations, we shall use the most common embarkation point (the vast majority of people boarded at Southampton), while for fare we shall use the most common fare for that class of passenger. Let's take a look at the relevant passengers using filter() from dplyr:
+We'll start with the easy ones. For the two missing Embarked observations, we shall use the most common embarkation point for that class (the vast majority of people boarded at Southampton, which also had more first-class passengers than Cherbourg or Queenstown), while for fare we shall use the most common fare for that class of passenger. Let's take a look at the relevant passengers using filter() from dplyr:
 
 
 ```r
@@ -505,6 +505,31 @@ The missing fare belongs to third-class passenger travelling from Southampton. L
 
 ```r
 titanic %>% group_by(Pclass, Embarked) %>%
+                summarise(count = n(), median_fare = median(Fare, na.rm=TRUE))
+```
+
+```
+## Source: local data frame [10 x 4]
+## Groups: Pclass [?]
+## 
+##    Pclass Embarked count median_fare
+##     <int>    <chr> <int>       <dbl>
+## 1       1        C   141     76.7292
+## 2       1        Q     3     90.0000
+## 3       1        S   177     52.0000
+## 4       1     <NA>     2     80.0000
+## 5       2        C    28     15.3146
+## 6       2        Q     7     12.3500
+## 7       2        S   242     15.3750
+## 8       3        C   101      7.8958
+## 9       3        Q   113      7.7500
+## 10      3        S   495      8.0500
+```
+
+And now let's insert the missing port as the most common port for that class and the missing fare as the median fare for a 3rd-class passenger travelling from Southampton:
+
+```r
+titanic %>% group_by(Pclass, Embarked) %>%
                 summarise(median_fare = median(Fare, na.rm=TRUE))
 ```
 
@@ -526,9 +551,6 @@ titanic %>% group_by(Pclass, Embarked) %>%
 ## 10      3        S      8.0500
 ```
 
-And now let's insert the missing port as the most common port and the missing fare as the median fare for a 3rd-class passenger travelling from Southampton:
-
-
 ```r
 titanic <- titanic %>%
               mutate(Embarked = factor(ifelse(is.na(Embarked), names(which.max(table(titanic$Embarked))), Embarked))) %>%
@@ -536,7 +558,7 @@ titanic <- titanic %>%
               mutate(Fare = ifelse(is.na(Fare), round(median(Fare, na.rm = TRUE), 4), Fare))
 ```
 
-While we're on the subject of embarkation ports, passenger classes and fares, let's tale a quick look at how they each relate to survival chances:
+While we're on the subject of embarkation ports, passenger classes and fares, let's take a quick look at how they each relate to survival chances:
 
 
 ```r
@@ -547,7 +569,7 @@ ggplot(titanic[1:891,], aes(x = Embarked, fill = Survived)) +
       ggtitle("Survival Rates by Embarkation Port")
 ```
 
-![](Titanic_tidyverse_files/figure-html/unnamed-chunk-25-1.png)<!-- -->
+![](Titanic_tidyverse_files/figure-html/unnamed-chunk-26-1.png)<!-- -->
 
 The Cherbourg passengers appear to have had the better prospects.
 
@@ -560,7 +582,7 @@ ggplot(titanic[1:891,], aes(x = Pclass, fill = Survived)) +
       ggtitle("Survival Rates by Passenger Class")
 ```
 
-![](Titanic_tidyverse_files/figure-html/unnamed-chunk-26-1.png)<!-- -->
+![](Titanic_tidyverse_files/figure-html/unnamed-chunk-27-1.png)<!-- -->
 
 As one would have expected, those in first-class had a far higher survival chance, whereas only around one in four of the third-class passengers made it through the night.
 
@@ -571,7 +593,7 @@ ggplot(titanic[1:891,], aes(x = log(Fare), fill = Survived)) +
       ggtitle("Density Plot of Fare related to Survival") 
 ```
 
-![](Titanic_tidyverse_files/figure-html/unnamed-chunk-27-1.png)<!-- -->
+![](Titanic_tidyverse_files/figure-html/unnamed-chunk-28-1.png)<!-- -->
 
 Here we first transform Fare to a log scale to deal with the heavy right-skew. Clearly those with cheaper (i.e. third-class) tickets were by far the most at risk.
 
@@ -610,7 +632,7 @@ ggplot(titanic[1:891,], aes(x = Age, fill = Survived)) +
       ggtitle("Density Plot of Age related to Survival") 
 ```
 
-![](Titanic_tidyverse_files/figure-html/unnamed-chunk-29-1.png)<!-- -->
+![](Titanic_tidyverse_files/figure-html/unnamed-chunk-30-1.png)<!-- -->
 
 Here we see that survival rates were good up until around the age of 18, with a poor survival rate for 20-35 year olds and few survivors over the age of 60. For simplicity, let's break this down into three groups: Child (under-18), Adult and OAP (over-60).
 
@@ -625,7 +647,7 @@ ggplot(titanic[1:891,], aes(x = LifeStage, fill = Survived)) +
       ggtitle("Survival Rates by Life Stage")
 ```
 
-![](Titanic_tidyverse_files/figure-html/unnamed-chunk-30-1.png)<!-- -->
+![](Titanic_tidyverse_files/figure-html/unnamed-chunk-31-1.png)<!-- -->
 
 This barplot clearly shows that over-60s had a poor survival rate and under-18s a much better than average survival rate.
 
@@ -745,7 +767,7 @@ cforestImpPlot <- function(x) {
 cforestImpPlot(cf_model)
 ```
 
-![](Titanic_tidyverse_files/figure-html/unnamed-chunk-35-1.png)<!-- -->
+![](Titanic_tidyverse_files/figure-html/unnamed-chunk-36-1.png)<!-- -->
 
 Title and Sex are by far the most important variables, according to our model.
 
